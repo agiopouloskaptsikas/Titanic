@@ -5,7 +5,7 @@ TASKS (Deadline: 03/10/2021, 13:00)
 
 1) Clean Dataset: Define what "clean dataset" means and figure out ways to execute it (e.g drop missing values or impute them),
 
-	• Create a function that counts every column's missing values, if any, and returns the names of the columns, for which missing values have been reported, the corresponding 			percentages of their missing values, and a barplot that collectivelly illustrates these pieces of information in a clear and compact form,
+	• Create a function that counts every column's missing values, if any, and returns the names of the columns, for which missing values have been reported, the corresponding 		  percentages of their missing values, and a barplot that collectivelly illustrates these pieces of information in a clear and compact form,
 
 	• more to come...
 
