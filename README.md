@@ -3,9 +3,7 @@ Practice Pandas and NumPy techniques for later use in ML projects pipelines.
 
 TASKS (Deadline: 03/10/2021, 13:00)
 
-1) Clean Dataset: Define what "clean dataset" means and figure out ways to execute it (e.g drop missing values or impute them),
-	a. Create a function that counts every column's missing values, if any, and returns the names of the columns, for which missing values have been reported, the corresponding 		  percentages of their missing values, and a barplot that collectivelly illustrates these pieces of information in a clear and compact form,
-	b. more to come...
+1) Clean Dataset: Define what "clean dataset" means and figure out ways to execute it (e.g drop missing values or impute them): a) Create a function that counts every column's missing values, if any, and returns the names of the columns, for which missing values have been reported, the corresponding percentages of their missing values, and a barplot that collectivelly illustrates these pieces of information in a clear and compact form,
 2) Basic EDA: Create some basic plots about variables of interest and explore what relationship (bivariate) they have with the target variable. Experiment with matplotlib, Seaborn.
 3) Explore multivariate relationships via graphs. Identify a few plots designed to summarize information from several variables simultaneously. Explain how they work.
 4) Explore your data via groups and report any interesting findings. Only use basic plots here if necessary.
