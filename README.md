@@ -7,7 +7,7 @@ TASKS
 
     a. Create a function that counts every column's missing values, if any, and returns the names of the columns, for which missing values have been reported, the corresponding counts and percentages of their missing values, and a barplot that collectivelly illustrates these pieces of information in a clear and compact form,
 
-    b. Create a function that imputes the missing values in column "Age" via Linear Reggression,
+    b. Create a function that imputes the missing values in column "Age" via Linear Reggression (check, [here](https://rstudio-pubs-static.s3.amazonaws.com/98715_fcd035c75a9b431a84efca8b091a185f.html)),
 
     c. Create a function that imputes the missing values in column "Cabin". Here, use a probabilistic* method to do so, and instead of the exact cabin that the person occupied, try to predict the deck that it was situated into, and store the new information in a new column titled "Deck". As to why, have a look [here](https://www.kaggle.com/gunesevitan/titanic-advanced-feature-engineering-tutorial/notebook), under paragraph "1.2.4 Cabin". Actually, there is a clear connection between the ticket class of a passenger (Pclass) and the location of his/her cabin on the ship. Although this information has already been captured in "Pclass", thus adding little predictive power, it would be a useful way to exercise data cleaning skills.
 
