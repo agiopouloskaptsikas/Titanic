@@ -4,9 +4,13 @@ Practice Pandas and NumPy techniques for later use in ML projects pipelines.
 TASKS
 
 1) Clean Dataset: Define what "clean dataset" means and figure out ways to execute it (e.g drop missing values or impute them):
-a. Create a function that counts every column's missing values, if any, and returns the names of the columns, for which missing values have been reported, the corresponding counts and percentages of their missing values, and a barplot that collectivelly illustrates these pieces of information in a clear and compact form,
-b. Create a function that imputes the missing values in column "Age" via Linear Reggression,
-c. Create a function that imputes the missing values in column "Cabin". Here, use a probabilistic* method to do so, and instead of the exact cabin that the person occupied, try to predict the deck that it was situated into, and store the new information in a new column titled "Deck". As to why, have a look [here](https://www.kaggle.com/gunesevitan/titanic-advanced-feature-engineering-tutorial/notebook), under paragraph "1.2.4 Cabin". Actually, there is a clear connection between the ticket class of a passenger (Pclass) and the location of his/her cabin on the ship. Although this information has already been captured in "Pclass", thus adding little predictive power, it would be a useful way to exercise, and acquire, data cleaning skills.
+
+  a. Create a function that counts every column's missing values, if any, and returns the names of the columns, for which missing values have been reported, the corresponding counts and percentages of their missing values, and a barplot that collectivelly illustrates these pieces of information in a clear and compact form,
+
+  b. Create a function that imputes the missing values in column "Age" via Linear Reggression,
+
+  c. Create a function that imputes the missing values in column "Cabin". Here, use a probabilistic* method to do so, and instead of the exact cabin that the person occupied, try to predict the deck that it was situated into, and store the new information in a new column titled "Deck". As to why, have a look [here](https://www.kaggle.com/gunesevitan/titanic-advanced-feature-engineering-tutorial/notebook), under paragraph "1.2.4 Cabin". Actually, there is a clear connection between the ticket class of a passenger (Pclass) and the location of his/her cabin on the ship. Although this information has already been captured in "Pclass", thus adding little predictive power, it would be a useful way to exercise, and acquire, data cleaning skills.
+
 2) Basic EDA: Create some basic plots about variables of interest and explore what relationship (bivariate) they have with the target variable. Experiment with matplotlib, Seaborn.
 3) Explore multivariate relationships via graphs. Identify a few plots designed to summarize information from several variables simultaneously. Explain how they work.
 4) Explore your data via groups and report any interesting findings. Only use basic plots here if necessary.
