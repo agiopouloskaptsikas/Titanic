@@ -13,7 +13,7 @@ TASKS
 
     [1]: Technically, all passengers' cabins were located in Decks A, B, C, D, E, F, and G. Most of the 1st class passengers' cabins, were in the decks A, B, and C, which were exclusively allocated for them. The rest of the 1st class's cabins were situated in decks D and E, yet these decks had also cabins, which were ment for all passengers. The last two decks, namelly decks F and G, had been provided only to 2nd and 3rd class passengers. All these facts, and more, are collectivelly illustrated and quantified in the "cabins.csv"[2] file, which can be found in the files above. Given these pieces of information, and the total number of passengers in the dataset, try to solve the problem at hand.
 
-    [2]: In "cabins.csv" file are given the number of passengers, in total (total) and per class (fc, sc, tc, fsc, stc, and fstc), who could be accomodated in every deck.
+    [2]: In "cabins.csv" file is given the number of passengers, in total (total) and per class (fc, sc, tc, fsc, stc, and fstc), who could be accomodated in every deck.
 For example, take deck E that can accomodate a total number of 597 (total) passengers. Specifically, 16 (fc) of these passengers could be 1st class, 62 (sc) 2nd class,
 and 212 (tc) 3rd class. Apart from these cabins, there were also a number of other cabins that could accomodate, either 1st, or 2nd class passengers. These passengers,
 in total, were 319 (fsc, i.e. 1st and 2nd class). As you can imagine, although these cabins could accomodate both classes, 1st class passengers would enjoy higher priority,
