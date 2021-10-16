@@ -1,3 +1,7 @@
+The data below further analyzes the cabins' distribution between 1st, 2nd, and 3rd Class passengers.
+Every value is measured in passengers. For example, in the first row, deck A has the capacity to
+accomodate 49 passengers (given in column "total"), in total, all of whom belong to 1st Class.
+
 deck,total,fc,sc,tc,fsc,stc,fstc
 A,49,49,0,0,0,0,0
 B,193,193,0,0,0,0,0
