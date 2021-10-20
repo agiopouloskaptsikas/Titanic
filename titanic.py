@@ -84,6 +84,8 @@ titanic["Age"] = np.where(titanic["Age"].isna(),
 import math
 titanic["Age"] = titanic["Age"].apply(lambda x: math.ceil(x) if x < 1 else round(x)).astype("int8")
 
+# [TO DO] memory savings (%)?
+
 # now, how can we compare this option to the one of using linear regression to impute the missing parts of "Age"?
 # theoretically, the prediction error of the mean is simply the standard deviation. thus, we can use it as a benchamark.
 # but is it BLUE (BLUE, here, means Best Linear Unbiased Estimator)? this, among others, means that standard deviation
@@ -93,19 +95,19 @@ titanic["Age"] = titanic["Age"].apply(lambda x: math.ceil(x) if x < 1 else round
 import scipy.stats as stats
 import itertools
 
-def check_normality_homoscedasticity(data, variable, groupby, a = 0.05, check_normality = True, check_homoscedasticity = True):
+def check_homoscedasticity_normality(data, variable, groupby, a = 0.05, check_normality = True):
     y = data[groupby].unique(); y.sort()
     x_groupby_y = [data.loc[data[groupby] == i, variable] for i in y]
+    flag_homoscedasticity = True
+    for i in list(itertools.combinations(y, 2)):
+        if stats.bartlett(x_groupby_y[i[0]], x_groupby_y[i[1]])[1] < a:
+            flag_homoscedasticity = False; break
+    flag_normality = "-"
     if check_normality == True:
         flag_normality = True
         for i in y:
             if stats.shapiro(x_groupby_y[i])[1] < a:
                 flag_normality = False; break
-    if check_homoscedasticity == True:
-        flag_homoscedasticity = True
-        for i in list(itertools.combinations(y, 2)):
-            if stats.bartlett(x_groupby_y[i[0]], x_groupby_y[i[1]])[1] < a:
-                flag_homoscedasticity = False; break
     print("Normality: " + str(flag_normality), ", ", "Homoscedasticity: " + str(flag_homoscedasticity))
 
 # we may conclude that the distribution of "Age" does not remain constant while "Pclass" changes.
@@ -119,17 +121,29 @@ baseline_error = stats.sem(titanic["Age"].dropna())
 data["fold"] = np.apply_along_axis(lambda x: np.repeat(x, 5), 0, np.arange(1, folds + 1))
 np.where(np.array([1,2,3])==2)[0][0]
 
-def kfoldcv_lr(data, y, x, k, r, impute = True):
 # data = dataframe,
 # y = output variable (character), x = input variables (list of characters),
 # k = number of folds (integer), r = number of resamplings (integer)
-if impute:
-    fold_size = data[y].dropna().shape[0]//k
-else:
-    fold_size = data[y].shape[0]//k
-fold = np.apply_along_axis(lambda x: np.repeat(x, fold_size), 0, np.arange(1, k + 1))
-for s in list(range(r)):
-    data[fold] = np.random.shuffle(fold)
-    for i in data[fold].unique():
-        trainY, trainX = data.loc[data["fold"] != i, y], data.loc[data["fold"] != i, x]
-        testY, testX = data.loc[data["fold"] == i, y], data.loc[data["fold"] == i, x]
+def kfoldcv_lr(data, y, x, k, r, impute = True):
+    # if impute is True, then y has missing values, which have to be imputed.
+    # in such case, proceed to k-fold partiotioning of the data without the rows, where y is missing.
+    # else, proceed in k-fold partitioning of the whole dataset.
+    if impute:
+        fold_size = data[y].dropna().shape[0]//k
+    else:
+        fold_size = data[y].shape[0]//k
+    # create an equally partitioned series of k folds, where in each of them a different integer is stored, i.e.
+    # [1, 1, ..., 1] = 1st fold, [2, 2, ..., 2] = 2nd fold, ... and so on.
+    fold = np.apply_along_axis(lambda x: np.repeat(x, fold_size), 0, np.arange(1, k + 1))
+    # empty list in which the cross validation errors will be stored
+    cv_error = []
+    for s in list(range(r)):
+        # reshuffle samples
+        data[fold] = np.random.shuffle(fold)
+        # empty list in which the k-fold errors will be stored
+        kfold_error = []
+        for i in data[fold].unique():
+            # define training and testing sets
+            train_y, train_x = data.loc[data["fold"] != i, y], data.loc[data["fold"] != i, x]
+            test_y, test_x = data.loc[data["fold"] == i, y], data.loc[data["fold"] == i, x]
+            
