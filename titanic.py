@@ -117,7 +117,7 @@ def check_homoscedasticity_normality(data, variable, groupby, a = 0.05, check_no
 
 baseline_error = stats.sem(titanic["Age"].dropna())
 
-# comparing method: 5-fold cross validation with resampling
+# comparing method: k-fold cross validation with resampling
 data["fold"] = np.apply_along_axis(lambda x: np.repeat(x, 5), 0, np.arange(1, folds + 1))
 np.where(np.array([1,2,3])==2)[0][0]
 
@@ -126,24 +126,34 @@ np.where(np.array([1,2,3])==2)[0][0]
 # k = number of folds (integer), r = number of resamplings (integer)
 def kfoldcv_lr(data, y, x, k, r, impute = True):
     # if impute is True, then y has missing values, which have to be imputed.
-    # in such case, proceed to k-fold partiotioning of the data without the rows, where y is missing.
+    # in such case, proceed to k-fold partiotioning of the data without the rows, for which y is missing.
     # else, proceed in k-fold partitioning of the whole dataset.
-    if impute:
-        fold_size = data[y].dropna().shape[0]//k
-    else:
-        fold_size = data[y].shape[0]//k
-    # create an equally partitioned series of k folds, where in each of them a different integer is stored, i.e.
-    # [1, 1, ..., 1] = 1st fold, [2, 2, ..., 2] = 2nd fold, ... and so on.
-    fold = np.apply_along_axis(lambda x: np.repeat(x, fold_size), 0, np.arange(1, k + 1))
+    
+    # create an equally partitioned array of k folds, where in each of them a different integer is stored, i.e.
+    # [1st fold = (1, 1, ..., 1), 2nd fold = (2, 2, ..., 2), k-th fold = (k, k, ..., k)]
+    fold = np.concatenate((
+                           np.apply_along_axis(lambda x: np.repeat(x, data[y].dropna().shape[0] // k), 0, np.arange(1, k + 1)),
+                           np.repeat(0, data[y].dropna().shape[0] % k)
+                          ))
+    data.insert(data.shape[1], "fold", fold)
     # empty list in which the cross validation errors will be stored
     cv_error = []
     for s in list(range(r)):
+        # for spotting the values that are left after partitioning "fold" in k equal segments
+        mod_k = 0; list_k = [i for i in range(1, k + 1)]
         # reshuffle samples
         data[fold] = np.random.shuffle(fold)
         # empty list in which the k-fold errors will be stored
         kfold_error = []
         for i in data[fold].unique():
+            # 
+            mod_k = i; list_k.remove(mod_k)
+            # 
+            data.loc[data["fold"] == mod_k, "fold"] = np.random.choice(list_k, 1)
             # define training and testing sets
             train_y, train_x = data.loc[data["fold"] != i, y], data.loc[data["fold"] != i, x]
             test_y, test_x = data.loc[data["fold"] == i, y], data.loc[data["fold"] == i, x]
-            
+            # MODEL
+        random_id_rows = np.random.randint(low = 0,
+                                           high = data[y].dropna().shape[0],
+                                           size = data[y].dropna().shape[0] % k)
