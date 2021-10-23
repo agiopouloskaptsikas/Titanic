@@ -139,21 +139,12 @@ def kfoldcv_lr(data, y, x, k, r, impute = True):
     # empty list in which the cross validation errors will be stored
     cv_error = []
     for s in list(range(r)):
-        # for spotting the values that are left after partitioning "fold" in k equal segments
-        mod_k = 0; list_k = [i for i in range(1, k + 1)]
         # reshuffle samples
         data[fold] = np.random.shuffle(fold)
         # empty list in which the k-fold errors will be stored
         kfold_error = []
         for i in data[fold].unique():
-            # 
-            mod_k = i; list_k.remove(mod_k)
-            # 
-            data.loc[data["fold"] == mod_k, "fold"] = np.random.choice(list_k, 1)
             # define training and testing sets
             train_y, train_x = data.loc[data["fold"] != i, y], data.loc[data["fold"] != i, x]
             test_y, test_x = data.loc[data["fold"] == i, y], data.loc[data["fold"] == i, x]
             # MODEL
-        random_id_rows = np.random.randint(low = 0,
-                                           high = data[y].dropna().shape[0],
-                                           size = data[y].dropna().shape[0] % k)
