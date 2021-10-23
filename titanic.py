@@ -145,5 +145,6 @@ def kfoldcv_lr(data, y, x, k, r, impute = True):
         for i in data[fold].unique():
             # define training and testing sets
             train_y, train_x = data.loc[data["fold"] != i, y], data.loc[data["fold"] != i, x]
-            test_y, test_x = data.loc[data["fold"] == i, y], data.loc[data["fold"] == i, x]
+            test_y, test_x = data.loc[((data["fold"] == i) or (data["fold"] == 0)), y], data.loc[((data["fold"] == i) or (data["fold"] == 0)), x]
             # MODEL
+            
