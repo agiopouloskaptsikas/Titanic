@@ -121,6 +121,9 @@ baseline_error = stats.sem(titanic["Age"].dropna())
 data["fold"] = np.apply_along_axis(lambda x: np.repeat(x, 5), 0, np.arange(1, folds + 1))
 np.where(np.array([1,2,3])==2)[0][0]
 
+from sklearn.linear_model import LinearRegression as linreg
+from sklearn import metrics
+
 # data = dataframe,
 # y = output variable (character), x = input variables (list of characters),
 # k = number of folds (integer), r = number of resamplings (integer)
@@ -134,17 +137,22 @@ def kfoldcv_lr(data, y, x, k, r, impute = True):
     fold = np.concatenate((
                            np.apply_along_axis(lambda x: np.repeat(x, data[y].dropna().shape[0] // k), 0, np.arange(1, k + 1)),
                            np.repeat(0, data[y].dropna().shape[0] % k)
-                          )); data.insert(data.shape[1], "fold", fold)
+                          ))
+    data = data.loc[data[y].notnull(),]; data.insert(data.shape[1], "fold", fold)
     # empty list in which the cross validation errors will be stored
     cv_error = []
-    for s in list(range(r)):
+    for i in list(range(r)):
         # reshuffle samples
         data[fold] = np.random.shuffle(fold)
         # empty list in which the k-fold errors will be stored
         kfold_error = []
-        for i in data[fold].unique():
+        for j in data["fold"].unique():
             # define training and testing sets
-            train_y, train_x = data.loc[data["fold"] != i, y], data.loc[data["fold"] != i, x]
-            test_y, test_x = data.loc[((data["fold"] == i) or (data["fold"] == 0)), y], data.loc[((data["fold"] == i) or (data["fold"] == 0)), x]
-            # MODEL
+            train_y, train_x = data.loc[data["fold"] != j, y], data.loc[data["fold"] != j, x]
+            test_y, test_x = data.loc[(data["fold"] in [0, j]), y], data.loc[(data["fold"] == j or data["fold"] == 0), x]
+            # initialize; train; predict
+            lr = linreg(); lr.fit(train_x, train_y); pred_y = lr.predict(test_x)
+            # calculate j-th fold's prediction error and store it into kfold_error
             
+        # calculate i-th reshuffle's prediction error and store it into cv_error
+    # calculate and return mean cv_error
