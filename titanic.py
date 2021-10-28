@@ -65,7 +65,7 @@ titanic["Embarked"].fillna(max(value_frequencies), inplace = True)
 
 # first, what we would get, if we used the mean "Age" to impute the missing parts?
 # the correlation matrix indicate that there exists a relationship between variables "Age" and "Pclass".
-# although somewhat weak (-0.404651), it is the most prominent, hence we can base our imputation on it.
+# although somewhat weak (-0.404651), "Pclass" is the most prominent relationship, hence we can base our imputation on it.
 titanic[["Age", "Pclass", "SibSp", "Parch"]].corr().iloc[:,0]
 
 # Age       1.000000
