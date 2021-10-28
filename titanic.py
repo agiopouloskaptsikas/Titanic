@@ -114,45 +114,43 @@ def check_homoscedasticity_normality(data, variable, groupby, a = 0.05, check_no
 # normality condition is not satisfied, and heteroscedasticity is introduced. we shall not infer that standard error
 # for non-missing values is an unbiased estimator of the prediction error. however, we may use it as a rough benchmark for
 # measuring the predictive accuracy of the imputation using linear regression, even though being a misestimation.
-
-baseline_error = stats.sem(titanic["Age"].dropna())
+baseline_error = np.std(titanic["Age"].dropna())
 
 # comparing method: k-fold cross validation with resampling
-data["fold"] = np.apply_along_axis(lambda x: np.repeat(x, 5), 0, np.arange(1, folds + 1))
-np.where(np.array([1,2,3])==2)[0][0]
-
 from sklearn.linear_model import LinearRegression as linreg
 from sklearn import metrics
+import warnings
+warnings.filterwarnings("ignore")
 
 # data = dataframe,
 # y = output variable (character), x = input variables (list of characters),
 # k = number of folds (integer), r = number of resamplings (integer)
-def kfoldcv_lr(data, y, x, k, r, impute = True):
-    # if impute is True, then y has missing values, which have to be imputed.
-    # in such case, proceed to k-fold partiotioning of the data without the rows, for which y is missing.
-    # else, proceed in k-fold partitioning of the whole dataset.
-    
+def kfoldcv_lr(data, y, x, k, r):
+    # drop rows, for which "Age" is missing
+    data = data.loc[data[y].notnull(),]
     # create an equally partitioned array of k folds, where in each of them a different integer is stored, i.e.
     # [1st fold = (1, 1, ..., 1), 2nd fold = (2, 2, ..., 2), k-th fold = (k, k, ..., k)]
     fold = np.concatenate((
-                           np.apply_along_axis(lambda x: np.repeat(x, data[y].dropna().shape[0] // k), 0, np.arange(1, k + 1)),
-                           np.repeat(0, data[y].dropna().shape[0] % k)
-                          ))
-    data = data.loc[data[y].notnull(),]; data.insert(data.shape[1], "fold", fold)
+                           np.apply_along_axis(lambda x: np.repeat(x, data[y].shape[0] // k), 0, np.arange(1, k + 1)),
+                           np.repeat(0, data[y].shape[0] % k)
+                          )); data.insert(data.shape[1], "fold", fold)
     # empty list in which the cross validation errors will be stored
-    cv_error = []
+    cv_error = np.array([])
     for i in list(range(r)):
         # reshuffle samples
-        data[fold] = np.random.shuffle(fold)
+        np.random.shuffle(fold); data["fold"] = fold
         # empty list in which the k-fold errors will be stored
-        kfold_error = []
+        kfold_error = np.array([])
         for j in data["fold"].unique():
             # define training and testing sets
             train_y, train_x = data.loc[data["fold"] != j, y], data.loc[data["fold"] != j, x]
-            test_y, test_x = data.loc[(data["fold"] in [0, j]), y], data.loc[(data["fold"] == j or data["fold"] == 0), x]
+            test_y, test_x = data.loc[np.logical_or(data["fold"] == 0, data["fold"] == j), y], data.loc[np.logical_or(data["fold"] == 0, data["fold"] == j), x]
             # initialize; train; predict
             lr = linreg(); lr.fit(train_x, train_y); pred_y = lr.predict(test_x)
             # calculate j-th fold's prediction error and store it into kfold_error
-            
+            kfold_error = np.append(kfold_error,
+                                    np.sqrt(metrics.mean_squared_error(test_y, pred_y)))
         # calculate i-th reshuffle's prediction error and store it into cv_error
+        cv_error = np.append(cv_error, kfold_error.mean())
     # calculate and return mean cv_error
+    return cv_error.mean()
