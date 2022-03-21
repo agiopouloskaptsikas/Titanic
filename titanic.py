@@ -96,7 +96,8 @@ import scipy.stats as stats
 import itertools
 
 def check_homoscedasticity_normality(data, variable, groupby, a = 0.05, check_normality = True):
-    y = data[groupby].unique(); y.sort()
+    y = data[groupby].unique()
+    y.sort()
     x_groupby_y = [data.loc[data[groupby] == i, variable] for i in y]
     flag_homoscedasticity = True
     for i in list(itertools.combinations(y, 2)):
@@ -130,23 +131,22 @@ def kfoldcv_lr(data, y, x, k, r):
     data = data.loc[data[y].notnull(),]
     # create an equally partitioned array of k folds, where in each of them a different integer is stored, i.e.
     # [1st fold = (1, 1, ..., 1), 2nd fold = (2, 2, ..., 2), k-th fold = (k, k, ..., k)]
-    fold = np.concatenate((
-                           np.apply_along_axis(lambda x: np.repeat(x, data[y].shape[0] // k), 0, np.arange(1, k + 1)),
-                           np.repeat(0, data[y].shape[0] % k)
-                          ))
+    fold = np.concatenate((np.apply_along_axis(lambda x: np.repeat(x, data[y].shape[0] // k), 0, np.arange(1, k + 1)),
+                           np.repeat(0, data[y].shape[0] % k)))
     data.insert(data.shape[1], "fold", fold)
     # empty list in which the cross validation errors will be stored
     cv_error = np.array([])
     for i in list(range(r)):
         # reshuffle samples
-        np.random.shuffle(fold); data["fold"] = fold
+        np.random.shuffle(fold)
+        data["fold"] = fold
         # empty list in which the k-fold errors will be stored
         kfold_error = np.array([])
         for j in data["fold"].unique():
             # define training and testing sets
             train_y, train_x = data.loc[data["fold"] != j, y], data.loc[data["fold"] != j, x]
             test_y, test_x = data.loc[np.logical_or(data["fold"] == 0, data["fold"] == j), y], data.loc[np.logical_or(data["fold"] == 0, data["fold"] == j), x]
-            # initialize; train; predict
+            # initialize, train, predict
             lr = linreg()
             lr.fit(train_x, train_y)
             pred_y = lr.predict(test_x)
