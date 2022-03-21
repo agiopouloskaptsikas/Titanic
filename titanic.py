@@ -133,7 +133,8 @@ def kfoldcv_lr(data, y, x, k, r):
     fold = np.concatenate((
                            np.apply_along_axis(lambda x: np.repeat(x, data[y].shape[0] // k), 0, np.arange(1, k + 1)),
                            np.repeat(0, data[y].shape[0] % k)
-                          )); data.insert(data.shape[1], "fold", fold)
+                          ))
+    data.insert(data.shape[1], "fold", fold)
     # empty list in which the cross validation errors will be stored
     cv_error = np.array([])
     for i in list(range(r)):
