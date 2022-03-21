@@ -147,7 +147,9 @@ def kfoldcv_lr(data, y, x, k, r):
             train_y, train_x = data.loc[data["fold"] != j, y], data.loc[data["fold"] != j, x]
             test_y, test_x = data.loc[np.logical_or(data["fold"] == 0, data["fold"] == j), y], data.loc[np.logical_or(data["fold"] == 0, data["fold"] == j), x]
             # initialize; train; predict
-            lr = linreg(); lr.fit(train_x, train_y); pred_y = lr.predict(test_x)
+            lr = linreg()
+            lr.fit(train_x, train_y)
+            pred_y = lr.predict(test_x)
             # calculate j-th fold's prediction error and store it into kfold_error
             kfold_error = np.append(kfold_error,
                                     np.sqrt(metrics.mean_squared_error(test_y, pred_y)))
