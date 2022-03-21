@@ -131,8 +131,7 @@ def kfoldcv_lr(data, y, x, k, r):
     data = data.loc[data[y].notnull(),]
     # create an equally partitioned array of k folds, where in each of them a different integer is stored, i.e.
     # [1st fold = (1, 1, ..., 1), 2nd fold = (2, 2, ..., 2), k-th fold = (k, k, ..., k)]
-    fold = np.concatenate((np.apply_along_axis(lambda x: np.repeat(x, data[y].shape[0] // k), 0, np.arange(1, k + 1)),
-                           np.repeat(0, data[y].shape[0] % k)))
+    fold = np.concatenate((np.apply_along_axis(lambda x: np.repeat(x, data[y].shape[0] // k), 0, np.arange(1, k + 1)), np.repeat(0, data[y].shape[0] % k)))
     data.insert(data.shape[1], "fold", fold)
     # empty list in which the cross validation errors will be stored
     cv_error = np.array([])
@@ -151,8 +150,7 @@ def kfoldcv_lr(data, y, x, k, r):
             lr.fit(train_x, train_y)
             pred_y = lr.predict(test_x)
             # calculate j-th fold's prediction error and store it into kfold_error
-            kfold_error = np.append(kfold_error,
-                                    np.sqrt(metrics.mean_squared_error(test_y, pred_y)))
+            kfold_error = np.append(kfold_error, np.sqrt(metrics.mean_squared_error(test_y, pred_y)))
         # calculate i-th reshuffle's prediction error and store it into cv_error
         cv_error = np.append(cv_error, kfold_error.mean())
     # calculate and return mean cv_error
